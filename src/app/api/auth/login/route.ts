@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { verifyPassword } from "@/lib/auth/password";
 import { signJwt } from "@/lib/auth/jwt";
-import { setAuthCookie } from "@/lib/auth/cookies";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -47,10 +46,9 @@ export async function POST(request: Request) {
     email: user.email,
     name: user.name,
   });
-  await setAuthCookie(token);
 
   const { password: _password, ...safeUser } = user;
   void _password;
 
-  return NextResponse.json({ user: safeUser });
+  return NextResponse.json({ user: safeUser, token });
 }

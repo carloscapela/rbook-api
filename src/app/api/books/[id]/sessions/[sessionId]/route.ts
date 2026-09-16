@@ -11,10 +11,10 @@ function parsePositiveInt(raw: string): number | null {
 
 type RouteContext = { params: Promise<{ id: string; sessionId: string }> };
 
-export async function GET(_request: Request, { params }: RouteContext) {
+export async function GET(request: Request, { params }: RouteContext) {
   let session;
   try {
-    session = await requireSession();
+    session = await requireSession(request);
   } catch (err) {
     if (err instanceof UnauthorizedError) {
       return NextResponse.json({ error: "não autenticado" }, { status: 401 });
@@ -57,7 +57,7 @@ export async function GET(_request: Request, { params }: RouteContext) {
 export async function PATCH(request: Request, { params }: RouteContext) {
   let session;
   try {
-    session = await requireSession();
+    session = await requireSession(request);
   } catch (err) {
     if (err instanceof UnauthorizedError) {
       return NextResponse.json({ error: "não autenticado" }, { status: 401 });
@@ -110,10 +110,10 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   return NextResponse.json({ session: readingSession });
 }
 
-export async function DELETE(_request: Request, { params }: RouteContext) {
+export async function DELETE(request: Request, { params }: RouteContext) {
   let session;
   try {
-    session = await requireSession();
+    session = await requireSession(request);
   } catch (err) {
     if (err instanceof UnauthorizedError) {
       return NextResponse.json({ error: "não autenticado" }, { status: 401 });

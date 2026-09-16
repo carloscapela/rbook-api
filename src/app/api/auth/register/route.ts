@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hashPassword } from "@/lib/auth/password";
 import { signJwt } from "@/lib/auth/jwt";
-import { setAuthCookie } from "@/lib/auth/cookies";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -74,7 +73,6 @@ export async function POST(request: Request) {
     email: user.email,
     name: user.name,
   });
-  await setAuthCookie(token);
 
-  return NextResponse.json({ user }, { status: 201 });
+  return NextResponse.json({ user, token }, { status: 201 });
 }

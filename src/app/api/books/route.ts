@@ -9,7 +9,7 @@ const MAX_LIMIT = 100;
 export async function GET(request: Request) {
   let session;
   try {
-    session = await requireSession();
+    session = await requireSession(request);
   } catch (err) {
     if (err instanceof UnauthorizedError) {
       return NextResponse.json({ error: "não autenticado" }, { status: 401 });
@@ -46,7 +46,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   let session;
   try {
-    session = await requireSession();
+    session = await requireSession(request);
   } catch (err) {
     if (err instanceof UnauthorizedError) {
       return NextResponse.json({ error: "não autenticado" }, { status: 401 });

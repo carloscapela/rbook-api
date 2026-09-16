@@ -14,7 +14,7 @@ Leitores que quiram acompanhar hábitos de leitura, comparar meses/anos, e mante
 
 - [Next.js 16](https://nextjs.org/) (App Router, Route Handlers) — TypeScript
 - [Supabase](https://supabase.com/) (Postgres via PostgREST) como banco de dados
-- Autenticação própria via **JWT** ([`jose`](https://github.com/panva/jose)) + cookie `httpOnly`, com senhas hasheadas via [`bcryptjs`](https://github.com/dcodeIO/bcrypt.js) — não usa o Supabase Auth, pois o schema de usuários é uma tabela `public.users` própria
+- Autenticação própria e **stateless** via **JWT** ([`jose`](https://github.com/panva/jose)), enviado no header `Authorization: Bearer <token>` (sem sessão/cookie no servidor — pensado para consumo por apps), com senhas hasheadas via [`bcryptjs`](https://github.com/dcodeIO/bcrypt.js) — não usa o Supabase Auth, pois o schema de usuários é uma tabela `public.users` própria
 
 ## 4. Pré-requisitos
 
@@ -71,14 +71,14 @@ npm run lint     # lint com ESLint
 src/
   app/
     api/
-      auth/            # registro, login, logout, sessão atual (me)
+      auth/            # registro, login, sessão atual (me)
       books/            # CRUD de livros do usuário autenticado
         [id]/
           sessions/     # CRUD de sessões de leitura de um livro
       metas/            # CRUD de metas de leitura do usuário
       health/           # healthcheck simples
   lib/
-    auth/               # jwt, cookies, hash de senha, leitura de sessão
+    auth/               # jwt, hash de senha, leitura de sessão via Bearer token
     books/               # validação de campos e checagem de posse do livro
     metas/               # validação de campos
     sessions/            # validação de campos
@@ -88,16 +88,19 @@ src/
 
 ## 7. Endpoints da API
 
-Toda rota (exceto `/api/health` e `/api/auth/*`) exige uma sessão válida: o cookie `rbooks_session`, definido automaticamente pelo login/registro.
+Toda rota (exceto `/api/health`, `/api/auth/register` e `/api/auth/login`) exige o header `Authorization: Bearer <token>`, com o token retornado pelo registro/login. Não há sessão no servidor: "logout" é responsabilidade do cliente (basta descartar o token armazenado). O token expira em 7 dias.
+
+```bash
+curl -H "Authorization: Bearer $TOKEN" https://rbook-api.onrender.com/api/books
+```
 
 ### Autenticação
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
-| POST | `/api/auth/register` | Cria usuário (`name`, `email`, `password`) e já autentica |
-| POST | `/api/auth/login` | Autentica com `email` + `password` |
-| POST | `/api/auth/logout` | Encerra a sessão |
-| GET | `/api/auth/me` | Retorna o usuário da sessão atual |
+| POST | `/api/auth/register` | Cria usuário (`name`, `email`, `password`) e retorna `{ user, token }` |
+| POST | `/api/auth/login` | Autentica com `email` + `password` e retorna `{ user, token }` |
+| GET | `/api/auth/me` | Retorna o usuário do token enviado |
 
 ### Livros (`books`)
 

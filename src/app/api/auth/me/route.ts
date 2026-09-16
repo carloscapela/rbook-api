@@ -1,15 +1,9 @@
 import { NextResponse } from "next/server";
-import { getAuthCookie } from "@/lib/auth/cookies";
-import { verifyJwt } from "@/lib/auth/jwt";
+import { requireSession, UnauthorizedError } from "@/lib/auth/session";
 
-export async function GET() {
-  const token = await getAuthCookie();
-  if (!token) {
-    return NextResponse.json({ error: "não autenticado" }, { status: 401 });
-  }
-
+export async function GET(request: Request) {
   try {
-    const payload = await verifyJwt(token);
+    const payload = await requireSession(request);
     return NextResponse.json({
       user: {
         id: payload.sub,
@@ -18,7 +12,10 @@ export async function GET() {
         name: payload.name,
       },
     });
-  } catch {
-    return NextResponse.json({ error: "token inválido" }, { status: 401 });
+  } catch (err) {
+    if (err instanceof UnauthorizedError) {
+      return NextResponse.json({ error: "não autenticado" }, { status: 401 });
+    }
+    throw err;
   }
 }
