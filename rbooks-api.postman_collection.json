@@ -1,0 +1,376 @@
+{
+  "info": {
+    "name": "rbooks API",
+    "description": "Coleção de requisições da API do rbooks (auth, books, sessions de leitura e metas). Autenticação por cookie httpOnly (rbook_session) — o Postman guarda o cookie automaticamente após o Login, então as demais requisições já funcionam sem configuração extra.\n\nAntes de usar, preencha as variáveis de coleção `login_email` e `login_password` (aba Variables da coleção) com as credenciais do usuário de teste — elas ficam vazias no arquivo versionado por segurança.\n\nAltere a variável `base_url` para apontar para o ambiente desejado (produção no Render ou localhost em desenvolvimento).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "9f6f2a3e-2b3a-4a0e-8a1e-3b8e2b9f6c11"
+  },
+  "variable": [
+    { "key": "base_url", "value": "https://rbook-api.onrender.com" },
+    { "key": "login_email", "value": "", "description": "Preencha localmente no Postman — não fica salvo no git" },
+    { "key": "login_password", "value": "", "description": "Preencha localmente no Postman — não fica salvo no git" },
+    { "key": "book_id", "value": "" },
+    { "key": "session_id", "value": "" },
+    { "key": "meta_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{login_email}}\",\n  \"password\": \"{{login_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Autentica via cookie httpOnly. Preencha as variáveis de coleção `login_email` e `login_password` (ex.: rbook@gmail.com) — elas não têm valor default e não vão para o git."
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Novo Usuário\",\n  \"email\": \"novo.usuario@example.com\",\n  \"password\": \"SenhaForte123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Cria um novo usuário e já autentica (define o cookie de sessão). rbook@gmail.com já existe — use outro e-mail aqui."
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Retorna o usuário da sessão atual (baseado no cookie)."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Encerra a sessão atual (limpa o cookie)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "List Books",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/books?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set('book_id', body.book.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Duna\",\n  \"author\": \"Frank Herbert\",\n  \"total_pages\": 600,\n  \"type_book\": \"ficcao\",\n  \"status\": 0,\n  \"data_init\": \"2026-01-01\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/books",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books"]
+            },
+            "description": "Cria um livro para o usuário autenticado. Salva o id retornado em `book_id`."
+          }
+        },
+        {
+          "name": "Get Book",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/books/{{book_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "{{book_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Book",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": 1,\n  \"note\": \"lendo agora\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/books/{{book_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "{{book_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Book",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/books/{{book_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "{{book_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reading Sessions",
+      "item": [
+        {
+          "name": "List Sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/books/{{book_id}}/sessions?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "{{book_id}}", "sessions"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set('session_id', body.session.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"page_ini\": 1,\n  \"page_final\": 50,\n  \"time_reading\": \"01:30\",\n  \"notes\": \"comecei a leitura\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/books/{{book_id}}/sessions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "{{book_id}}", "sessions"]
+            },
+            "description": "Cria uma sessão de leitura para o livro `book_id`. Salva o id retornado em `session_id`."
+          }
+        },
+        {
+          "name": "Get Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/books/{{book_id}}/sessions/{{session_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "{{book_id}}", "sessions", "{{session_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Session",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"page_final\": 80,\n  \"notes\": \"parei aqui\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/books/{{book_id}}/sessions/{{session_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "{{book_id}}", "sessions", "{{session_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Session",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/books/{{book_id}}/sessions/{{session_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "{{book_id}}", "sessions", "{{session_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Metas",
+      "item": [
+        {
+          "name": "List Metas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/metas?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api", "metas"],
+              "query": [
+                { "key": "limit", "value": "20" },
+                { "key": "offset", "value": "0" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Meta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set('meta_id', body.meta.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": 2,\n  \"period\": 30,\n  \"value_check\": \"10 livros\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/metas",
+              "host": ["{{base_url}}"],
+              "path": ["api", "metas"]
+            },
+            "description": "Cria uma meta para o usuário autenticado. Salva o id retornado em `meta_id`."
+          }
+        },
+        {
+          "name": "Get Meta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/metas/{{meta_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "metas", "{{meta_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Meta",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"value_check\": \"5 livros\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/metas/{{meta_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "metas", "{{meta_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Meta",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/metas/{{meta_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "metas", "{{meta_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "health"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
