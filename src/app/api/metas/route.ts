@@ -6,6 +6,37 @@ import { parseMetaFields } from "@/lib/metas/fields";
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
 
+/**
+ * @swagger
+ * /api/metas:
+ *   get:
+ *     tags: [Metas]
+ *     summary: Lista as metas do usuário autenticado
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, default: 20, maximum: 100 }
+ *       - in: query
+ *         name: offset
+ *         schema: { type: integer, default: 0 }
+ *     responses:
+ *       200:
+ *         description: Lista paginada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 metas: { type: array, items: { $ref: '#/components/schemas/Meta' } }
+ *                 total: { type: integer }
+ *                 limit: { type: integer }
+ *                 offset: { type: integer }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function GET(request: Request) {
   let session;
   try {
@@ -43,6 +74,42 @@ export async function GET(request: Request) {
   return NextResponse.json({ metas: data, total: count, limit, offset });
 }
 
+/**
+ * @swagger
+ * /api/metas:
+ *   post:
+ *     tags: [Metas]
+ *     summary: Cria uma meta para o usuário autenticado
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type: { type: integer, nullable: true, example: 1 }
+ *               period: { type: integer, nullable: true, example: 30 }
+ *               value_check: { type: string, nullable: true, example: "10 livros" }
+ *     responses:
+ *       201:
+ *         description: Meta criada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 meta: { $ref: '#/components/schemas/Meta' }
+ *       400:
+ *         description: Dados inválidos
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function POST(request: Request) {
   let session;
   try {

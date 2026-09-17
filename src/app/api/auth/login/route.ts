@@ -3,6 +3,44 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { verifyPassword } from "@/lib/auth/password";
 import { signJwt } from "@/lib/auth/jwt";
 
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Autentica e retorna o token de sessão
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, password]
+ *             properties:
+ *               email: { type: string, format: email, example: carlos@example.com }
+ *               password: { type: string, format: password, example: SenhaForte123 }
+ *     responses:
+ *       200:
+ *         description: Autenticado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user: { $ref: '#/components/schemas/User' }
+ *                 token: { type: string, description: JWT para usar em Authorization Bearer }
+ *       400:
+ *         description: Dados inválidos
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       401:
+ *         description: Credenciais inválidas
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
 

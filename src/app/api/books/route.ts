@@ -6,6 +6,37 @@ import { parseBookFields } from "@/lib/books/fields";
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
 
+/**
+ * @swagger
+ * /api/books:
+ *   get:
+ *     tags: [Books]
+ *     summary: Lista os livros do usuário autenticado
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, default: 20, maximum: 100 }
+ *       - in: query
+ *         name: offset
+ *         schema: { type: integer, default: 0 }
+ *     responses:
+ *       200:
+ *         description: Lista paginada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 books: { type: array, items: { $ref: '#/components/schemas/Book' } }
+ *                 total: { type: integer }
+ *                 limit: { type: integer }
+ *                 offset: { type: integer }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function GET(request: Request) {
   let session;
   try {
@@ -43,6 +74,49 @@ export async function GET(request: Request) {
   return NextResponse.json({ books: data, total: count, limit, offset });
 }
 
+/**
+ * @swagger
+ * /api/books:
+ *   post:
+ *     tags: [Books]
+ *     summary: Cria um livro para o usuário autenticado
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [title]
+ *             properties:
+ *               title: { type: string, example: Duna }
+ *               author: { type: string, nullable: true, example: Frank Herbert }
+ *               imge_url: { type: string, nullable: true }
+ *               total_pages: { type: integer, nullable: true, example: 600 }
+ *               type_book: { type: string, nullable: true, example: ficcao }
+ *               status: { type: integer, nullable: true }
+ *               note: { type: string, nullable: true }
+ *               data_init: { type: string, format: date-time, nullable: true }
+ *               data_final: { type: string, format: date-time, nullable: true }
+ *     responses:
+ *       201:
+ *         description: Livro criado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 book: { $ref: '#/components/schemas/Book' }
+ *       400:
+ *         description: Dados inválidos
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function POST(request: Request) {
   let session;
   try {

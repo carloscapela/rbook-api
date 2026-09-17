@@ -86,7 +86,22 @@ src/
       admin.ts           # client Supabase server-only (Secret Key)
 ```
 
-## 7. Endpoints da API
+## 7. Documentação interativa (Swagger)
+
+A API é documentada com [`next-swagger-doc`](https://github.com/jellydn/next-swagger-doc): cada rota tem um bloco `@swagger` (JSDoc) descrevendo parâmetros, corpo e respostas, agregado em uma spec OpenAPI 3.0.
+
+- **Spec JSON:** `/api/doc` — gerada em [src/lib/swagger.ts](src/lib/swagger.ts)
+- **UI interativa (Swagger UI):** `/docs`
+
+```bash
+open http://localhost:3000/docs
+# ou em produção
+open https://rbook-api.onrender.com/docs
+```
+
+Para testar rotas autenticadas pela UI, clique em **Authorize** e informe o token (`Bearer <token>`) retornado por `/api/auth/login`.
+
+## 8. Endpoints da API
 
 Toda rota (exceto `/api/health`, `/api/auth/register` e `/api/auth/login`) exige o header `Authorization: Bearer <token>`, com o token retornado pelo registro/login. Não há sessão no servidor: "logout" é responsabilidade do cliente (basta descartar o token armazenado). O token expira em 7 dias.
 

@@ -10,6 +10,37 @@ function parseBookId(raw: string): number | null {
 
 type RouteContext = { params: Promise<{ id: string }> };
 
+/**
+ * @swagger
+ * /api/books/{id}:
+ *   get:
+ *     tags: [Books]
+ *     summary: Detalhe de um livro
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200:
+ *         description: Livro encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 book: { $ref: '#/components/schemas/Book' }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Livro não encontrado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function GET(request: Request, { params }: RouteContext) {
   let session;
   try {
@@ -48,6 +79,58 @@ export async function GET(request: Request, { params }: RouteContext) {
   return NextResponse.json({ book });
 }
 
+/**
+ * @swagger
+ * /api/books/{id}:
+ *   patch:
+ *     tags: [Books]
+ *     summary: Atualiza parcialmente um livro
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title: { type: string }
+ *               author: { type: string, nullable: true }
+ *               imge_url: { type: string, nullable: true }
+ *               total_pages: { type: integer, nullable: true }
+ *               type_book: { type: string, nullable: true }
+ *               status: { type: integer, nullable: true }
+ *               note: { type: string, nullable: true }
+ *               data_init: { type: string, format: date-time, nullable: true }
+ *               data_final: { type: string, format: date-time, nullable: true }
+ *     responses:
+ *       200:
+ *         description: Livro atualizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 book: { $ref: '#/components/schemas/Book' }
+ *       400:
+ *         description: Dados inválidos
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Livro não encontrado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function PATCH(request: Request, { params }: RouteContext) {
   let session;
   try {
@@ -99,6 +182,37 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   return NextResponse.json({ book });
 }
 
+/**
+ * @swagger
+ * /api/books/{id}:
+ *   delete:
+ *     tags: [Books]
+ *     summary: Remove um livro
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200:
+ *         description: Removido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok: { type: boolean, example: true }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Livro não encontrado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function DELETE(request: Request, { params }: RouteContext) {
   let session;
   try {

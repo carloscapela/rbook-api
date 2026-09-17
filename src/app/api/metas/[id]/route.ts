@@ -10,6 +10,37 @@ function parseMetaId(raw: string): number | null {
 
 type RouteContext = { params: Promise<{ id: string }> };
 
+/**
+ * @swagger
+ * /api/metas/{id}:
+ *   get:
+ *     tags: [Metas]
+ *     summary: Detalhe de uma meta
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200:
+ *         description: Meta encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 meta: { $ref: '#/components/schemas/Meta' }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Meta não encontrada
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function GET(request: Request, { params }: RouteContext) {
   let session;
   try {
@@ -48,6 +79,52 @@ export async function GET(request: Request, { params }: RouteContext) {
   return NextResponse.json({ meta });
 }
 
+/**
+ * @swagger
+ * /api/metas/{id}:
+ *   patch:
+ *     tags: [Metas]
+ *     summary: Atualiza parcialmente uma meta
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type: { type: integer, nullable: true }
+ *               period: { type: integer, nullable: true }
+ *               value_check: { type: string, nullable: true }
+ *     responses:
+ *       200:
+ *         description: Meta atualizada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 meta: { $ref: '#/components/schemas/Meta' }
+ *       400:
+ *         description: Dados inválidos
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Meta não encontrada
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function PATCH(request: Request, { params }: RouteContext) {
   let session;
   try {
@@ -99,6 +176,37 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   return NextResponse.json({ meta });
 }
 
+/**
+ * @swagger
+ * /api/metas/{id}:
+ *   delete:
+ *     tags: [Metas]
+ *     summary: Remove uma meta
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200:
+ *         description: Removida
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok: { type: boolean, example: true }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Meta não encontrada
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function DELETE(request: Request, { params }: RouteContext) {
   let session;
   try {

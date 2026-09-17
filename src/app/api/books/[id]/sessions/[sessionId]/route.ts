@@ -11,6 +11,42 @@ function parsePositiveInt(raw: string): number | null {
 
 type RouteContext = { params: Promise<{ id: string; sessionId: string }> };
 
+/**
+ * @swagger
+ * /api/books/{id}/sessions/{sessionId}:
+ *   get:
+ *     tags: [Reading Sessions]
+ *     summary: Detalhe de uma sessão de leitura
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *         description: id do livro
+ *       - in: path
+ *         name: sessionId
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200:
+ *         description: Sessão encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 session: { $ref: '#/components/schemas/ReadingSession' }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Livro ou sessão não encontrados
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function GET(request: Request, { params }: RouteContext) {
   let session;
   try {
@@ -54,6 +90,58 @@ export async function GET(request: Request, { params }: RouteContext) {
   return NextResponse.json({ session: readingSession });
 }
 
+/**
+ * @swagger
+ * /api/books/{id}/sessions/{sessionId}:
+ *   patch:
+ *     tags: [Reading Sessions]
+ *     summary: Atualiza parcialmente uma sessão de leitura
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *         description: id do livro
+ *       - in: path
+ *         name: sessionId
+ *         required: true
+ *         schema: { type: integer }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               page_ini: { type: integer, nullable: true }
+ *               page_final: { type: integer, nullable: true }
+ *               time_reading: { type: string, nullable: true }
+ *               notes: { type: string, nullable: true }
+ *     responses:
+ *       200:
+ *         description: Sessão atualizada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 session: { $ref: '#/components/schemas/ReadingSession' }
+ *       400:
+ *         description: Dados inválidos
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Livro ou sessão não encontrados
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function PATCH(request: Request, { params }: RouteContext) {
   let session;
   try {
@@ -110,6 +198,42 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   return NextResponse.json({ session: readingSession });
 }
 
+/**
+ * @swagger
+ * /api/books/{id}/sessions/{sessionId}:
+ *   delete:
+ *     tags: [Reading Sessions]
+ *     summary: Remove uma sessão de leitura
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *         description: id do livro
+ *       - in: path
+ *         name: sessionId
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200:
+ *         description: Removida
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok: { type: boolean, example: true }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Livro ou sessão não encontrados
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function DELETE(request: Request, { params }: RouteContext) {
   let session;
   try {

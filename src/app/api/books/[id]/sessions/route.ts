@@ -14,6 +14,47 @@ function parseBookId(raw: string): number | null {
 
 type RouteContext = { params: Promise<{ id: string }> };
 
+/**
+ * @swagger
+ * /api/books/{id}/sessions:
+ *   get:
+ *     tags: [Reading Sessions]
+ *     summary: Lista as sessões de leitura de um livro
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *         description: id do livro
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, default: 20, maximum: 100 }
+ *       - in: query
+ *         name: offset
+ *         schema: { type: integer, default: 0 }
+ *     responses:
+ *       200:
+ *         description: Lista paginada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 sessions: { type: array, items: { $ref: '#/components/schemas/ReadingSession' } }
+ *                 total: { type: integer }
+ *                 limit: { type: integer }
+ *                 offset: { type: integer }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Livro não encontrado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function GET(request: Request, { params }: RouteContext) {
   let session;
   try {
@@ -61,6 +102,54 @@ export async function GET(request: Request, { params }: RouteContext) {
   return NextResponse.json({ sessions: data, total: count, limit, offset });
 }
 
+/**
+ * @swagger
+ * /api/books/{id}/sessions:
+ *   post:
+ *     tags: [Reading Sessions]
+ *     summary: Registra uma sessão de leitura para o livro
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *         description: id do livro
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               page_ini: { type: integer, nullable: true, example: 1 }
+ *               page_final: { type: integer, nullable: true, example: 50 }
+ *               time_reading: { type: string, nullable: true, example: "01:30" }
+ *               notes: { type: string, nullable: true }
+ *     responses:
+ *       201:
+ *         description: Sessão criada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 session: { $ref: '#/components/schemas/ReadingSession' }
+ *       400:
+ *         description: Dados inválidos
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       401:
+ *         description: Não autenticado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Livro não encontrado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
 export async function POST(request: Request, { params }: RouteContext) {
   let session;
   try {
