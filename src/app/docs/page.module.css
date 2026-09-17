@@ -13,7 +13,29 @@
   color: var(--foreground);
 }
 
-/* Sobrescreve a paleta azul padrão do Swagger UI pela paleta rbook (tons de sálvia). */
+/*
+ * swagger-ui-react não tem suporte real a dark mode (cores de texto fixas).
+ * Por isso a área do explorer fica sempre clara, com tokens próprios
+ * (não os tokens globais --sage e --card, que invertem no dark mode) —
+ * só o cabeçalho acima acompanha o tema do site.
+ */
+.swaggerRoot {
+  --docs-bg: #f6f3ea;
+  --docs-card: #fffdf7;
+  --docs-fg: #3f3e33;
+  --docs-accent-bg: #eaefdc;
+  --docs-border: #ded9c8;
+  --docs-sage-1: #e4e3d3;
+  --docs-sage-2: #c7cda6;
+  --docs-sage-3: #a6b87c;
+  --docs-sage-4: #86995a;
+  --docs-sage-5: #64793e;
+
+  flex: 1;
+  background: var(--docs-bg);
+  color-scheme: light;
+}
+
 .swaggerRoot :global(.swagger-ui) {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
@@ -22,41 +44,49 @@
   display: none;
 }
 
-.swaggerRoot :global(.swagger-ui .btn.authorize),
-.swaggerRoot :global(.swagger-ui .btn.authorize svg) {
-  color: var(--sage-5);
-  border-color: var(--sage-4);
+.swaggerRoot :global(.swagger-ui .info .title),
+.swaggerRoot :global(.swagger-ui .opblock-tag),
+.swaggerRoot :global(.swagger-ui .opblock .opblock-summary-description) {
+  color: var(--docs-fg);
 }
 
-.swaggerRoot :global(.swagger-ui .opblock-tag) {
-  color: var(--foreground);
+.swaggerRoot :global(.swagger-ui .btn.authorize),
+.swaggerRoot :global(.swagger-ui .btn.authorize svg) {
+  color: var(--docs-sage-5);
+  border-color: var(--docs-sage-4);
+}
+
+.swaggerRoot :global(.swagger-ui .scheme-container) {
+  background: var(--docs-card);
+  box-shadow: none;
+  border-bottom: 1px solid var(--docs-border);
 }
 
 .swaggerRoot :global(.swagger-ui .opblock.opblock-get) {
-  background: var(--accent-bg);
-  border-color: var(--sage-3);
+  background: var(--docs-accent-bg);
+  border-color: var(--docs-sage-3);
 }
 
 .swaggerRoot :global(.swagger-ui .opblock.opblock-get .opblock-summary-method) {
-  background: var(--sage-4);
+  background: var(--docs-sage-4);
 }
 
 .swaggerRoot :global(.swagger-ui .opblock.opblock-post) {
-  background: var(--accent-bg);
-  border-color: var(--sage-4);
+  background: var(--docs-accent-bg);
+  border-color: var(--docs-sage-4);
 }
 
 .swaggerRoot :global(.swagger-ui .opblock.opblock-post .opblock-summary-method) {
-  background: var(--sage-5);
+  background: var(--docs-sage-5);
 }
 
 .swaggerRoot :global(.swagger-ui .opblock.opblock-patch) {
-  background: var(--accent-bg);
-  border-color: var(--sage-2);
+  background: var(--docs-accent-bg);
+  border-color: var(--docs-sage-2);
 }
 
 .swaggerRoot :global(.swagger-ui .opblock.opblock-patch .opblock-summary-method) {
-  background: var(--sage-3);
+  background: var(--docs-sage-3);
 }
 
 .swaggerRoot :global(.swagger-ui .opblock.opblock-delete) {
@@ -69,11 +99,11 @@
 }
 
 .swaggerRoot :global(.swagger-ui .btn.execute) {
-  background: var(--sage-4);
-  border-color: var(--sage-4);
+  background: var(--docs-sage-4);
+  border-color: var(--docs-sage-4);
 }
 
-.swaggerRoot :global(.swagger-ui select),
-.swaggerRoot :global(.swagger-ui .scheme-container) {
-  background: var(--card);
+.swaggerRoot :global(.swagger-ui select) {
+  background: var(--docs-card);
+  color: var(--docs-fg);
 }
