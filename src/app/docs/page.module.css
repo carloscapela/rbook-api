@@ -1,0 +1,79 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
+.header :global(.wordmark) {
+  font-family: var(--font-wordmark);
+  font-size: 1.25rem;
+  color: var(--foreground);
+}
+
+/* Sobrescreve a paleta azul padrão do Swagger UI pela paleta rbook (tons de sálvia). */
+.swaggerRoot :global(.swagger-ui) {
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+.swaggerRoot :global(.swagger-ui .topbar) {
+  display: none;
+}
+
+.swaggerRoot :global(.swagger-ui .btn.authorize),
+.swaggerRoot :global(.swagger-ui .btn.authorize svg) {
+  color: var(--sage-5);
+  border-color: var(--sage-4);
+}
+
+.swaggerRoot :global(.swagger-ui .opblock-tag) {
+  color: var(--foreground);
+}
+
+.swaggerRoot :global(.swagger-ui .opblock.opblock-get) {
+  background: var(--accent-bg);
+  border-color: var(--sage-3);
+}
+
+.swaggerRoot :global(.swagger-ui .opblock.opblock-get .opblock-summary-method) {
+  background: var(--sage-4);
+}
+
+.swaggerRoot :global(.swagger-ui .opblock.opblock-post) {
+  background: var(--accent-bg);
+  border-color: var(--sage-4);
+}
+
+.swaggerRoot :global(.swagger-ui .opblock.opblock-post .opblock-summary-method) {
+  background: var(--sage-5);
+}
+
+.swaggerRoot :global(.swagger-ui .opblock.opblock-patch) {
+  background: var(--accent-bg);
+  border-color: var(--sage-2);
+}
+
+.swaggerRoot :global(.swagger-ui .opblock.opblock-patch .opblock-summary-method) {
+  background: var(--sage-3);
+}
+
+.swaggerRoot :global(.swagger-ui .opblock.opblock-delete) {
+  background: #f6ece7;
+  border-color: #c96f4a;
+}
+
+.swaggerRoot :global(.swagger-ui .opblock.opblock-delete .opblock-summary-method) {
+  background: #c96f4a;
+}
+
+.swaggerRoot :global(.swagger-ui .btn.execute) {
+  background: var(--sage-4);
+  border-color: var(--sage-4);
+}
+
+.swaggerRoot :global(.swagger-ui select),
+.swaggerRoot :global(.swagger-ui .scheme-container) {
+  background: var(--card);
+}

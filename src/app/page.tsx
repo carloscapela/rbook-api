@@ -1,11 +1,13 @@
 import styles from "./page.module.css";
+import { BookMark } from "@/components/BookLogo";
 
 export default function Home() {
   return (
     <main className={styles.page}>
       <div className={styles.card}>
+        <BookMark size={88} />
         <span className={styles.badge}>API em desenvolvimento</span>
-        <h1 className={styles.title}>rbooks</h1>
+        <h1 className={styles.title}>rbook</h1>
         <p className={styles.tagline}>
           Registre seus dias de leitura em um calendário visual, como um
           &ldquo;contribution graph&rdquo; do GitHub — mas para hábitos de
@@ -29,6 +31,9 @@ export default function Home() {
             rel="noopener noreferrer"
           >
             Ver repositório
+          </a>
+          <a className={styles.linkSecondary} href="/docs">
+            Documentação da API
           </a>
           <a className={styles.linkSecondary} href="/api/health">
             Status da API
